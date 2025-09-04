@@ -189,16 +189,23 @@ router.post('/files/toggle', express.json(), async (req, res) => {
  */
 router.get('/files/content', async (req, res) => {
   try {
-    const filePath = req.query.path; // Get the file path from query parameter
+    const filePath = req.query.path;
+    
+    
+    // Get the file path from query parameter
     if (typeof filePath !== 'string') {
       return res.status(400).json({ error: 'Invalid path parameter' });
     }
 
+    const fullpath=path.join(process.env.INIT_CMD || process.cwd(), 'user', filePath);
+ 
+  
     // Use the absolute path to read the file
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await fs.readFile(fullpath, 'utf-8');
+    console.log(content);
     
     // Get file metadata for the editor
-    const stats = await fs.stat(filePath);
+    const stats = await fs.stat(fullpath);
     const fileInfo = {
       name: path.basename(filePath),
       path: filePath,
@@ -216,7 +223,8 @@ router.get('/files/content', async (req, res) => {
     return res.status(500).json({ error: 'Error reading file' });
   }
 });
-
+//C:\Users\Ritesh Bamola\Desktop\Cloud\server\user\RItesh
+// C:\Users\Ritesh Bamola\Desktop\Cloud\server\user\RItesh\hii.js
 /**
  * Get file content for collaboration
  * This endpoint returns the content of a file for collaborative editing

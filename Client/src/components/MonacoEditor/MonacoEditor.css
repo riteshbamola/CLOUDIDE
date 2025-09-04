@@ -1,0 +1,151 @@
+.monaco-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.editor-tabs {
+  display: flex;
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.editor-tab {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #2d2d2d;
+  color: #ccc;
+  border-right: 1px solid #333;
+  cursor: pointer;
+  user-select: none;
+  max-width: 200px;
+  min-width: 100px;
+}
+
+.editor-tab.active {
+  background-color: #1e1e1e;
+  color: white;
+  border-bottom: 2px solid #0078d7;
+}
+
+.tab-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.tab-close {
+  margin-left: 8px;
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.tab-close:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.editor-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.find-replace-container {
+  display: flex;
+  padding: 8px;
+  background-color: #252526;
+  border-bottom: 1px solid #333;
+  gap: 10px;
+}
+
+.light-theme .find-replace-container {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #ddd;
+}
+
+.find-replace-inputs {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.find-replace-inputs input {
+  padding: 6px 8px;
+  border: 1px solid #444;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.light-theme .find-replace-inputs input {
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #333;
+}
+
+.find-replace-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.find-replace-buttons button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.no-file-selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: #1e1e1e;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Light theme styles */
+.light-theme .editor-tabs {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #ddd;
+}
+
+.light-theme .editor-tab {
+  background-color: #e6e6e6;
+  color: #333;
+  border-right: 1px solid #ddd;
+}
+
+.light-theme .editor-tab.active {
+  background-color: #f3f3f3;
+  color: #000;
+  border-bottom: 2px solid #0078d7;
+}
+
+.light-theme .tab-close {
+  color: #666;
+}
+
+.light-theme .tab-close:hover {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .no-file-selected {
+  background-color: #f3f3f3;
+  color: #666;
+}

@@ -126,6 +126,40 @@ io.on('connection', (socket) => {
     }
   });
 });
+// Add content endpoint
+app.get('/content', async (req, res) => {
+  try {
+    const filePath = req.query.path; // Get the file path from query parameter
+    if (typeof filePath !== 'string') {
+      return res.status(400).json({ error: 'Invalid path parameter' });
+    }
+
+    // Check if raw parameter is present for binary files like images
+    const isRaw = req.query.raw === 'true';
+
+    // Use the absolute path to read the file
+    if (isRaw) {
+      // For binary files, send the raw file
+      return res.sendFile(filePath);
+    } else {
+      // For text files, read the content and send as JSON
+      const content = await fs.readFile(filePath, 'utf-8');
+      
+      // Get file metadata for the editor
+      const stat = await fs.stat(filePath);
+      
+      return res.json({
+        content,
+        size: stat.size,
+        modifiedTime: stat.mtime.getTime()
+      });
+    }
+  } catch (error) {
+    console.error(`Error reading file: ${error.message}`);
+    return res.status(500).json({ error: 'Failed to read file' });
+  }
+});
+
 app.use('/', fileRoutes);
 
 const PORT = 9000;

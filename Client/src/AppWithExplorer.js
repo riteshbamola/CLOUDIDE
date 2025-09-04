@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './Layout.css';
 import './App.css';
-import { FileExplorer } from './components';
-import FileViewer from './components/FileViewer/FileViewer';
+import { FileExplorer, MonacoEditor, ThemeToggle } from './components';
 import Terminal from './components/Terminal/Terminal';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AppWithExplorer() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState('');
   const [terminalOutput, setTerminalOutput] = useState('');
+  const [openFiles, setOpenFiles] = useState({});
 
   // Handle file selection
   const handleFileSelect = async (file) => {
@@ -19,6 +20,12 @@ function AppWithExplorer() {
         
         setSelectedFile(file);
         setFileContent(data.content);
+        
+        // Add to open files
+        setOpenFiles(prev => ({
+          ...prev,
+          [file.path]: data.content
+        }));
       } catch (error) {
         console.error('Error fetching file content:', error);
         // Add error to terminal output
@@ -36,8 +43,11 @@ function AppWithExplorer() {
   };
 
   // Handle file save
-  const handleSaveFile = async () => {
-    if (selectedFile && !selectedFile.isDir) {
+  const handleSaveFile = async (path, content) => {
+    const fileToSave = path ? { path } : selectedFile;
+    const contentToSave = content !== undefined ? content : fileContent;
+    
+    if (fileToSave && !fileToSave.isDir) {
       try {
         const response = await fetch('/files/create', {
           method: 'POST',
@@ -45,8 +55,8 @@ function AppWithExplorer() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            path: selectedFile.path,
-            content: fileContent,
+            path: fileToSave.path,
+            content: contentToSave,
             isDir: false
           }),
         });
@@ -55,7 +65,16 @@ function AppWithExplorer() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        setTerminalOutput(prev => prev + '\nFile saved successfully: ' + selectedFile.name);
+        const fileName = fileToSave.name || fileToSave.path.split('/').pop();
+        setTerminalOutput(prev => prev + '\nFile saved successfully: ' + fileName);
+        
+        // Update open files state
+        if (path) {
+          setOpenFiles(prev => ({
+            ...prev,
+            [path]: content
+          }));
+        }
       } catch (error) {
         console.error('Error saving file:', error);
         setTerminalOutput(prev => prev + '\nError saving file: ' + error.message);
@@ -64,32 +83,36 @@ function AppWithExplorer() {
   };
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <h1>Cloud File Explorer</h1>
-        <div className="header-actions">
-          {selectedFile && !selectedFile.isDir && (
-            <button onClick={handleSaveFile}>Save</button>
-          )}
-        </div>
-      </header>
-      
-      <aside className="sidebar">
-        <FileExplorer onFileSelect={handleFileSelect} />
-      </aside>
-      
-      <main className="main-content">
-        <FileViewer 
-          file={selectedFile} 
-          content={fileContent} 
-          onContentChange={handleContentChange} 
-        />
-      </main>
-      
-      <footer className="bottom-panel">
-        <Terminal output={terminalOutput} />
-      </footer>
-    </div>
+    <ThemeProvider>
+      <div className="app-container">
+        <header className="header">
+          <h1>Cloud File Explorer</h1>
+          <div className="header-actions">
+            <ThemeToggle />
+            {selectedFile && !selectedFile.isDir && (
+              <button onClick={() => handleSaveFile()}>Save</button>
+            )}
+          </div>
+        </header>
+        
+        <aside className="sidebar">
+          <FileExplorer onFileSelect={handleFileSelect} />
+        </aside>
+        
+        <main className="main-content">
+          <MonacoEditor 
+            files={openFiles}
+            activeFile={selectedFile}
+            onContentChange={handleContentChange}
+            onSave={handleSaveFile}
+          />
+        </main>
+        
+        <footer className="bottom-panel">
+          <Terminal output={terminalOutput} />
+        </footer>
+      </div>
+    </ThemeProvider>
   );
 }
 

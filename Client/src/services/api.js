@@ -41,6 +41,7 @@ const API = {
   getFileContent: async (path) => {
     try {
       const response = await fetch(`/files/content?path=${encodeURIComponent(path)}`);
+      console.log(path);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

@@ -44,7 +44,14 @@ const FileViewer = ({ file, content, onContentChange }) => {
     if (isImage(file.name)) {
       return (
         <div className="image-view">
-          <img src={`/files/content?path=${encodeURIComponent(file.routeofnode)}&raw=true`} alt={file.name} />
+          <img 
+            src={`/content?path=${encodeURIComponent(file.routeofnode)}&raw=true`} 
+            alt={file.name} 
+            onError={(e) => {
+              // Fallback to the alternative endpoint if the first one fails
+              e.target.src = `/files/content?path=${encodeURIComponent(file.routeofnode)}&raw=true`;
+            }}
+          />
         </div>
       );
     }

@@ -14,13 +14,23 @@ function App() {
   const handleFileSelect = async (file) => {
     if (!file.isDir) {
       try {
-        const response = await fetch(`/files/content?path=${encodeURIComponent(file.routeofnode)}`);
+        const response = await fetch(`/content?path=${encodeURIComponent(file.routeofnode)}`);
         const data = await response.json();
         
         setSelectedFile(file);
         setFileContent(data.content);
       } catch (error) {
         console.error('Error fetching file content:', error);
+        // Try the alternative endpoint if the first one fails
+        try {
+          const response = await fetch(`/files/content?path=${encodeURIComponent(file.routeofnode)}`);
+          const data = await response.json();
+          
+          setSelectedFile(file);
+          setFileContent(data.content);
+        } catch (secondError) {
+          console.error('Error fetching file content from alternative endpoint:', secondError);
+        }
       }
     } else {
       setSelectedFile(file);
