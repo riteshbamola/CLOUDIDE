@@ -1,0 +1,37 @@
+CLOUD IDE PROJECT
+
+ DAY-1
+
+
+BACKEND:=----
+
+Task 1- Server initialisation
+creating a user directory if not exists // fs module fsmkdir
+mimic terminal 
+socket for file changes
+
+
+Task 2- fileRoutes, filetree
+react-virtualised 
+creating file tree ....generating children file tree also
+mergeing them
+
+API endpoints
+files-- generatefiletree(user) response- filetree, flattened nodes
+toggle-- response- all isvisible,toggles
+content- response- content
+create- createfile ifdir-createdir,, iffile- createdir(ifparentdir not exist) else createfile with (path,conten)
+delete- deletefile(if notdir)  if dir(delete all files) again generate tree
+
+
+
+
+FRONTEND :--
+
+LAYOUT- FILETREE
+GENERATING FILETREE THFOUGH FRONTEND
+THEN CREATING FILETREE,FILEXPLORER 
+FILETREE- CREATE STATES AND FILL THOSE STATES LIKE VISIBLE ... CONTENT....OPENED
+
+
+

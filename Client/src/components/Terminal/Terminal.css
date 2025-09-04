@@ -1,0 +1,45 @@
+/* Terminal.css */
+
+.terminal-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.terminal-header {
+  padding: 0.5rem 1rem;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+}
+
+.terminal-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.terminal-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.terminal-content pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.terminal-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #777;
+  font-style: italic;
+}
