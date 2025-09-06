@@ -1,4 +1,11 @@
 /* Terminal.css */
+@import '@xterm/xterm/css/xterm.css';
+
+.xterm {
+  font-family: monospace;
+  height: 100%;
+  width: 100%;
+}
 
 .terminal-container {
   display: flex;

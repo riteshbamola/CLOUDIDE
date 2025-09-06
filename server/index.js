@@ -18,7 +18,7 @@ app.use(cors());
 
 
 io.on('connection',(socket)=>{
-  console.log(socket.id);
+  console.log("socket connected ",socket.id);
   socket.on('terminal:data', (data)=>{
     mockTerminal.write(data);
   });
@@ -26,7 +26,7 @@ io.on('connection',(socket)=>{
     let command;
     try{
       //  const fullpath=filePath.startsWith('user') ? filePath:path.join(filePath,'user');
-      const fullpath= filePath
+      const fullpath= filePath;
       const ext= path.extname(fullpath).toLowerCase();
       console.log(ext);
       const filename= path.basename(fullpath);

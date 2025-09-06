@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Layout.css';
 import './App.css';
 import { FileExplorer, MonacoEditor, ThemeToggle } from './components';
-import Terminal from './components/Terminal/Terminal';
+import CMD from './components/Terminal/Terminal';
 import { ThemeProvider } from './context/ThemeContext';
 
 function AppWithExplorer() {
@@ -109,7 +109,7 @@ function AppWithExplorer() {
         </main>
         
         <footer className="bottom-panel">
-          <Terminal output={terminalOutput} />
+          <CMD output={terminalOutput} />
         </footer>
       </div>
     </ThemeProvider>

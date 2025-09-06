@@ -1,32 +1,63 @@
-import React, { useRef, useEffect } from 'react';
-import './Terminal.css';
+import React, { useRef, useEffect } from "react";
+import "./Terminal.css";
+import "@xterm/xterm/css/xterm.css";
+import { Terminal } from "@xterm/xterm";
+import { io } from "socket.io-client";
 
-const Terminal = ({ output }) => {
+const CMD = () => {
   const terminalRef = useRef(null);
+  const xtermRef = useRef(null);
 
-  // Auto-scroll to bottom when output changes
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [output]);
+    const term = new Terminal({
+      cursorBlink: true,
+      fontSize: 14,
+      theme: {
+        background: "#1e1e1e",
+        foreground: "#ffffff",
+      },
+    });
+
+    term.open(terminalRef.current);
+
+    // ✅ connect to backend using socket.io
+    const socket = io("http://localhost:9000");
+
+    socket.on("connect", () => {
+      term.writeln("✅ Connected to backend");
+      term.writeln("Type commands below...");
+    });
+
+    socket.on("disconnect", () => {
+      term.writeln("\r\n❌ Disconnected from server");
+    });
+
+    
+    socket.on("terminal:data", (data) => {
+      term.write(data);
+    });
+
+    
+    term.onData((data) => {
+      socket.emit("input", data);
+    });
+
+    xtermRef.current = term;
+
+    return () => {
+      term.dispose();
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className="terminal-container">
       <div className="terminal-header">
         <h3>Terminal</h3>
       </div>
-      <div className="terminal-content" ref={terminalRef}>
-        {output.length > 0 ? (
-          <pre>{output}</pre>
-        ) : (
-          <div className="terminal-placeholder">
-            <p>Terminal output will appear here</p>
-          </div>
-        )}
-      </div>
+      <div className="terminal-content" ref={terminalRef}></div>
     </div>
   );
 };
 
-export default Terminal;
+export default CMD;
