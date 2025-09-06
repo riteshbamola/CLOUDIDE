@@ -68,7 +68,9 @@ io.on('connection',(socket)=>{
       console.log(error.message);
     }
     socket.emit('terminal:data', `> Running: ${command}\n`);
+    socket.emit('terminal:data','\n\r');
     socket.emit('terminal:data',`hello`);
+    socket.emit('terminal:data','\n\r');
   })
 })
 
