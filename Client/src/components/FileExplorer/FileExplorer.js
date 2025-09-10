@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './FileExplorer.css';
+import { useGlobalContext } from '../../context/globalContext';
 
 const FileExplorer = ({ onFileSelect }) => {
-  const [fileTree, setFileTree] = useState(null);
+  const {currentFile, setCurrentFile, fileTree, setFileTree} = useGlobalContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedFolders, setExpandedFolders] = useState({});
-  const [selectedFile, setSelectedFile] = useState(null);
-
+  
   // Fetch file tree data
   useEffect(() => {
     const fetchFileTree = async () => {
@@ -28,7 +28,7 @@ const FileExplorer = ({ onFileSelect }) => {
     };
 
     fetchFileTree();
-  }, []);
+  }, [setFileTree]);
 
   // Toggle folder expanded/collapsed state
   const toggleFolder = (path) => {
@@ -40,8 +40,8 @@ const FileExplorer = ({ onFileSelect }) => {
 
   // Handle file selection
   const handleFileSelect = (file) => {
-    setSelectedFile(file.path);
-    if (onFileSelect) {
+    setCurrentFile(file);
+    if(!file.isDir) {
       onFileSelect(file);
     }
   };
@@ -55,7 +55,7 @@ const FileExplorer = ({ onFileSelect }) => {
       return (
         <li 
           key={node.path} 
-          className={`file-item ${selectedFile === node.path ? 'selected' : ''}`}
+          className={`file-item ${currentFile && currentFile.path === node.path ? 'selected' : ''}`}
           onClick={() => handleFileSelect(node)}
         >
           <span className="file-icon">{getFileIcon(node.name)}</span>

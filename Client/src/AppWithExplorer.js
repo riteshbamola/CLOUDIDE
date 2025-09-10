@@ -4,11 +4,10 @@ import './App.css';
 import { FileExplorer, MonacoEditor, ThemeToggle } from './components';
 import CMD from './components/Terminal/Terminal';
 import { ThemeProvider } from './context/ThemeContext';
+import { useGlobalContext } from './context/globalContext';
 
 function AppWithExplorer() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileContent, setFileContent] = useState('');
-  const [terminalOutput, setTerminalOutput] = useState('');
+  const {currentFile,setCurrentFile,fileContent,setFileContent,terminalOutput,setTerminalOutput}= useGlobalContext();
   const [openFiles, setOpenFiles] = useState({});
 
   // Handle file selection
@@ -18,7 +17,7 @@ function AppWithExplorer() {
         const response = await fetch(`/files/content?path=${encodeURIComponent(file.path)}`);
         const data = await response.json();
         
-        setSelectedFile(file);
+        setCurrentFile(file);
         setFileContent(data.content);
         
         // Add to open files
@@ -32,7 +31,7 @@ function AppWithExplorer() {
         setTerminalOutput(prev => prev + '\nError fetching file: ' + error.message);
       }
     } else {
-      setSelectedFile(file);
+      setCurrentFile(file);
       setFileContent('');
     }
   };
@@ -44,7 +43,7 @@ function AppWithExplorer() {
 
   // Handle file save
   const handleSaveFile = async (path, content) => {
-    const fileToSave = path ? { path } : selectedFile;
+    const fileToSave = path ? { path } : currentFile;
     const contentToSave = content !== undefined ? content : fileContent;
     
     if (fileToSave && !fileToSave.isDir) {
@@ -89,7 +88,7 @@ function AppWithExplorer() {
           <h1>Cloud File Explorer</h1>
           <div className="header-actions">
             <ThemeToggle />
-            {selectedFile && !selectedFile.isDir && (
+            {currentFile && !currentFile.isDir && (
               <button onClick={() => handleSaveFile()}>Save</button>
             )}
           </div>
@@ -102,9 +101,9 @@ function AppWithExplorer() {
         <main className="main-content">
           <MonacoEditor 
             files={openFiles}
-            activeFile={selectedFile}
             onContentChange={handleContentChange}
             onSave={handleSaveFile}
+            onFileSelect={handleFileSelect}
           />
         </main>
         

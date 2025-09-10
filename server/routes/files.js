@@ -202,7 +202,7 @@ router.get('/files/content', async (req, res) => {
   
     // Use the absolute path to read the file
     const content = await fs.readFile(fullpath, 'utf-8');
-    console.log(content);
+    // console.log("request from frontend",content);
     
     // Get file metadata for the editor
     const stats = await fs.stat(fullpath);

@@ -25,8 +25,9 @@ io.on('connection',(socket)=>{
   socket.on('file:run',(filePath)=>{
     let command;
     try{
-      //  const fullpath=filePath.startsWith('user') ? filePath:path.join(filePath,'user');
+      // const fullpath=filePath.startsWith('user') ? filePath:path.join(filePath,'user');
       const fullpath= filePath;
+      console.log(fullpath);
       const ext= path.extname(fullpath).toLowerCase();
       console.log(ext);
       const filename= path.basename(fullpath);

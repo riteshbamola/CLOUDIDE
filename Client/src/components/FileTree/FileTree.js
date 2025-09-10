@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { List, AutoSizer } from 'react-virtualized';
 import './FileTree.css';
-
+import { useGlobalContext } from '../../context/globalContext';
 const FileTree = ({ onFileSelect }) => {
-  const [treeData, setTreeData] = useState(null);
-  const [flattenedNodes, setFlattenedNodes] = useState([]);
+  const {fileTree,setFileTree,flattenedNodes,setFlattenedNodes}= useGlobalContext();
   const [visibleNodes, setVisibleNodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +18,7 @@ const FileTree = ({ onFileSelect }) => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        setTreeData(data.fileTree);
+        setFileTree(data.fileTree);
         setFlattenedNodes(data.flattenedNodes);
         setVisibleNodes(data.flattenedNodes.filter(node => node.isVisible));
         setLoading(false);

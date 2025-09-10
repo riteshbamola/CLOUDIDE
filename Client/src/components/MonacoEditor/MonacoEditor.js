@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import './MonacoEditor.css';
 import { useTheme } from '../../context/ThemeContext';
+import { useGlobalContext } from '../../context/globalContext';
 
-const MonacoEditor = ({ files, activeFile, onContentChange, onSave }) => {
+const MonacoEditor = ({ files,onContentChange, onSave, onFileSelect }) => {
+  const {currentFile,setCurrentFile}= useGlobalContext();
   const [openTabs, setOpenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [editorContents, setEditorContents] = useState({});
@@ -30,38 +32,43 @@ const MonacoEditor = ({ files, activeFile, onContentChange, onSave }) => {
     });
   };
 
-  // Update open tabs when a new file is selected
+  
   useEffect(() => {
-    if (activeFile && !activeFile.isDir) {
-      // Check if the file is already open in a tab
-      const isFileOpen = openTabs.some(tab => tab.path === activeFile.path);
+    if (currentFile && !currentFile.isDir) {
+     
+      const isFileOpen = openTabs.some(tab => tab.path === currentFile.path);
       
       if (!isFileOpen) {
-        // Add the file to open tabs
-        setOpenTabs(prevTabs => [...prevTabs, activeFile]);
+       
+        setOpenTabs(prevTabs => [...prevTabs, currentFile]);
       }
+      setActiveTab(currentFile);
       
-      // Set as active tab
-      setActiveTab(activeFile);
     }
-  }, [activeFile]);
+  }, [currentFile]);
 
   // Update editor contents when active tab changes
   useEffect(() => {
+    console.log('ActiveTab changed:', activeTab?.name);
+    
     if (activeTab) {
+      // Check if content is already available
       if (files[activeTab.path]) {
-        // If content is already in files object, use it
+        console.log('Using existing content from files prop for:', activeTab.name);
         setEditorContents(prev => ({
           ...prev,
           [activeTab.path]: files[activeTab.path]
         }));
       } else {
-        // Otherwise fetch content from server
+        console.log('Fetching content for:', activeTab.name);
+        // Fetch content from server
         const fetchContent = async () => {
           try {
+            console.log('Fetching from /content endpoint:', activeTab.path);
             const response = await fetch(`/content?path=${encodeURIComponent(activeTab.path)}`);
             const data = await response.json();
             
+            console.log('Content fetched successfully for:', activeTab.name);
             setEditorContents(prev => ({
               ...prev,
               [activeTab.path]: data.content
@@ -70,15 +77,23 @@ const MonacoEditor = ({ files, activeFile, onContentChange, onSave }) => {
             console.error('Error fetching file content from /content:', error);
             // Try alternative endpoint
             try {
+              console.log('Trying alternative endpoint /files/content:', activeTab.path);
               const response = await fetch(`/files/content?path=${encodeURIComponent(activeTab.path)}`);
               const data = await response.json();
               
+              console.log('Content fetched from alternative endpoint for:', activeTab.name);
               setEditorContents(prev => ({
                 ...prev,
                 [activeTab.path]: data.content
               }));
             } catch (secondError) {
               console.error('Error fetching file content from /files/content:', secondError);
+              // Set empty content if fetch fails
+              console.log('Setting empty content for:', activeTab.name);
+              setEditorContents(prev => ({
+                ...prev,
+                [activeTab.path]: ''
+              }));
             }
           }
         };
@@ -100,10 +115,21 @@ const MonacoEditor = ({ files, activeFile, onContentChange, onSave }) => {
     // Remove the tab
     setOpenTabs(prevTabs => prevTabs.filter(tab => tab.path !== tabToClose.path));
     
+    // Clean up editor contents for the closed tab
+    setEditorContents(prev => {
+      const newContents = { ...prev };
+      delete newContents[tabToClose.path];
+      return newContents;
+    });
+    
     // If the closed tab was active, set a new active tab
     if (activeTab && activeTab.path === tabToClose.path) {
       const remainingTabs = openTabs.filter(tab => tab.path !== tabToClose.path);
-      setActiveTab(remainingTabs.length > 0 ? remainingTabs[remainingTabs.length - 1] : null);
+      const newActiveTab = remainingTabs.length > 0 ? remainingTabs[remainingTabs.length - 1] : null;
+      setActiveTab(newActiveTab);
+      if(newActiveTab) {
+        onFileSelect(newActiveTab);
+      }
     }
   };
 
