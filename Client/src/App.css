@@ -129,3 +129,283 @@ button:disabled {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* Room Navigation Styles */
+
+.join-room-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.join-room-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.join-room-button:active {
+  transform: translateY(0);
+}
+
+.join-room-button:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.back-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.back-button:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+.back-button:focus {
+  outline: 2px solid #6c757d;
+  outline-offset: 2px;
+}
+
+.room-view {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.room-main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #f8f9fa;
+  position: relative;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Button group styling for better visual hierarchy */
+.header-actions > button:not(.join-room-button):not(.back-button) {
+  margin-left: 0.5rem;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .room-main {
+    background: #1e1e1e;
+  }
+  
+  .back-button {
+    background: #495057;
+  }
+  
+  .back-button:hover {
+    background: #3d4347;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .join-room-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+  }
+  
+  .back-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+  }
+
+  .header-actions {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .join-room-button,
+  .back-button {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    width: 100%;
+  }
+  
+  .header-actions > button {
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+  }
+}
+
+/* Loading states */
+.join-room-button:disabled,
+.back-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.join-room-button:disabled:hover,
+.back-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animation for room transition */
+.room-transition-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.room-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.room-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.room-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .join-room-button,
+  .back-button {
+    transition: none;
+  }
+  
+  .join-room-button:hover,
+  .back-button:hover {
+    transform: none;
+  }
+  
+  .room-transition-enter-active,
+  .room-transition-exit-active {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .join-room-button {
+    background: #000;
+    border: 2px solid #fff;
+  }
+  
+  .back-button {
+    background: #000;
+    border: 2px solid #fff;
+  }
+}
+
+/* Focus visible for better keyboard navigation */
+.join-room-button:focus-visible,
+.back-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+
+
+
+}
+
+.room-choice-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.room-section {
+  flex: 1;
+  min-width: 220px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.room-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.room-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 4px rgba(102, 126, 234, 0.3);
+}
+
+.create-section {
+  background: #fdfdfd;
+}
+
+.join-section {
+  background: #f9f9ff;
+}
+
+
