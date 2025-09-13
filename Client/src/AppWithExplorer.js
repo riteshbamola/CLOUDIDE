@@ -16,9 +16,16 @@ function AppWithExplorer() {
     setFileContent,
     terminalOutput,
     setTerminalOutput,
+    roomID,
+    setRoomID,
+    roomFile,
+    roomFileContent,
+    setRoomFileContent,
+    setroomFile
   } = useGlobalContext();
   const [openFiles, setOpenFiles] = useState({});
   const [showRoom, setShowRoom] = useState(false);
+  
 
   // Handle file selection
   const handleFileSelect = async (file) => {
@@ -44,6 +51,23 @@ function AppWithExplorer() {
     }
   };
 
+  const handleRoomFileSelect = async (file)=>{
+     if (!file.isDir) {
+      try {
+        const response = await fetch(`/files/content?path=${encodeURIComponent(file.path)}`);
+        const data = await response.json();
+
+        setroomFile(file);
+        setRoomFileContent(data.content);
+        console.log(roomFile);
+        console.log(roomFileContent);
+      }catch(error){
+        console.error("Error fetching file content:", error);
+        setTerminalOutput((prev) => prev + "\nError fetching file: " + error.message);
+      }
+    
+}
+}
   // Handle content change
   const handleContentChange = (newContent) => {
     setFileContent(newContent);
@@ -110,13 +134,62 @@ function AppWithExplorer() {
             <h1>Collaborative Room</h1>
           </header>
           <div className="room-main">
-            <Room />
+           <Room 
+              handleRoomFile={handleRoomFileSelect} 
+              onRoomJoined={(id) => {
+                setRoomID(id);
+                setTerminalOutput(prev => prev + `\nJoined room: ${id}`);
+                setShowRoom(false);  // ✅ Exit the "room create/join" screen
+              }} 
+/>
           </div>
         </div>
       </LiveblocksProvider>
     );
   }
 
+
+  if(roomID){
+    return (
+    <ThemeProvider>
+      <div className="app-container">
+        <header className="header">
+          <h1>Cloud File Explorer</h1>
+          <div className="header-actions">
+            <button
+              className="join-room-button"
+              onClick={handleJoinRoom}
+              title="Join a collaborative room"
+            >
+              🚪 Join Room
+            </button>
+            <ThemeToggle />
+            {currentFile && !currentFile.isDir && (
+              <button onClick={() => handleSaveFile()}>Save</button>
+            )}
+          </div>
+        </header>
+
+        {/* <aside className="sidebar">
+          <FileExplorer onFileSelect={handleFileSelect} />
+        // </aside> */}
+
+        <main className="main-content">
+          <MonacoEditor
+            files={openFiles}
+            onContentChange={handleContentChange}
+            onSave={handleSaveFile}
+            onFileSelect={handleFileSelect}
+          />
+        </main>
+
+        <footer className="bottom-panel">
+          <CMD output={terminalOutput} />
+        </footer>
+      </div>
+    </ThemeProvider>
+    );
+  }
   // Default view
   return (
     <ThemeProvider>

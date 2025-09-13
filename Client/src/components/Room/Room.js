@@ -2,19 +2,31 @@ import React, { useState } from "react";
 import { RoomProvider } from "@liveblocks/react";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import "./Room.css";
+import { useGlobalContext } from "../../context/globalContext";
 
-const Room = () => {
+
+const Room = ({handleRoomFile,onRoomJoined}) => {
   const [activeTab, setActiveTab] = useState("create"); // "create" or "join"
-  const [roomId, setRoomId] = useState("");
-  const [roomPassword, setRoomPassword] = useState("");
+  const {roomID,setRoomID,
+    roomPassword,setRoomPassword,
+      }= useGlobalContext();
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  
 
-  const handleJoinRoom = () => {
-    if (!roomId) return alert("Enter Room ID");
-    // Password can be used for verification if needed
+   const handleJoinRoom = () => {
+    if (!roomID) return alert("Enter Room ID");
+    console.log("Joined room:", roomID);
+    if (onRoomJoined) onRoomJoined(roomID);  // ✅ notify parent
+  };
+
+  const handleCreateRoom = () => {
+    const newRoom = "123456";
+    setRoomID(newRoom);
+    console.log("Created room:", newRoom);
+    if (onRoomJoined) onRoomJoined(newRoom); // ✅ notify parent
   };
 
   return (
@@ -39,34 +51,40 @@ const Room = () => {
         </div>
 
         {/* Create Room */}
-        {activeTab === "create" && (
-          <RoomProvider id={roomId || "new-room"}>
+        {(activeTab === "create") && (
+          <RoomProvider id={roomID || "new-room"}>
             <div className="password-box">
               <input
                 type="text"
                 className="password-input"
                 placeholder="Enter Room ID (optional)"
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
+                value={roomID}
+                onChange={(e) => setRoomID(e.target.value)}
               />
             </div>
 
             <div className="file-explorer-box">
-              <FileExplorer />
+              <FileExplorer onFileSelect= {handleRoomFile}/>
             </div>
+            <button className="primary-btn" onClick={()=>{
+              setRoomID("1234");
+              onRoomJoined("1234");
+            }}>
+                Create
+              </button>
           </RoomProvider>
         )}
 
         {/* Join Room */}
         {activeTab === "join" && (
-          <RoomProvider id={roomId || "join-room"}>
+          <RoomProvider id={roomID || "join-room"}>
             <div className="password-box">
               <input
                 type="text"
                 className="password-input"
                 placeholder="Enter Room ID"
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
+                value={roomID}
+                onChange={(e) => setRoomID(e.target.value)}
               />
               <input
                 type="password"

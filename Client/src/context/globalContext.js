@@ -12,6 +12,10 @@ export const GlobalProvider =({children})=>{
     const [terminalOutput, setTerminalOutput] = useState('');
     const [flattenedNodes, setFlattenedNodes] = useState([]);
     const [error,setError]= useState(null);
+    const [roomID,setRoomID]= useState("");
+    const [roomFile,setroomFile]= useState(null);
+    const [roomFileContent,setRoomFileContent]= useState(null);
+    const [roomPassword, setRoomPassword] = useState("");
 
     useEffect(() => {
     const s = io("http://localhost:9000");
@@ -34,7 +38,14 @@ export const GlobalProvider =({children})=>{
             setTerminalOutput,
             flattenedNodes,
             setFlattenedNodes,
-
+            roomID,
+            setRoomID,
+            roomFile,
+            setroomFile,
+            roomPassword,
+            setRoomPassword,
+            roomFileContent,
+            setRoomFileContent
         
         }}>
             {children}

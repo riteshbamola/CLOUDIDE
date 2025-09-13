@@ -4,8 +4,8 @@ import './MonacoEditor.css';
 import { useTheme } from '../../context/ThemeContext';
 import { useGlobalContext } from '../../context/globalContext';
 
-const MonacoEditor = ({ files,onContentChange, onSave, onFileSelect }) => {
-  const {currentFile,setCurrentFile}= useGlobalContext();
+const MonacoEditor = ({ files,onContentChange, onSave, onFileSelect, flag }) => {
+  const {currentFile,setCurrentFile,roomFile,roomFileContent}= useGlobalContext();
   const [openTabs, setOpenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [editorContents, setEditorContents] = useState({});
@@ -115,7 +115,7 @@ const MonacoEditor = ({ files,onContentChange, onSave, onFileSelect }) => {
     // Remove the tab
     setOpenTabs(prevTabs => prevTabs.filter(tab => tab.path !== tabToClose.path));
     
-    // Clean up editor contents for the closed tab
+    // Clean up editor contents for the closed tabs
     setEditorContents(prev => {
       const newContents = { ...prev };
       delete newContents[tabToClose.path];
